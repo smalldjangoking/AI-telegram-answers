@@ -3,7 +3,7 @@ from openai import AsyncOpenAI, APITimeoutError, APIConnectionError, RateLimitEr
 from openai.types.chat import ChatCompletionMessageParam
 from bot.core.config import settings
 
-from bot.core.constants import prompt
+from bot.core.constants import prompt as base_prompt
 
 from tenacity import (
     retry,
@@ -40,7 +40,7 @@ class OpenAIService:
     async def get_answer(self, prompt: str, context: str | None = None) -> str:
         """Public method to get an answer from OpenAI based on the prompt and optional context."""
         messages: list[ChatCompletionMessageParam] = [
-            {"role": "system", "content": prompt}
+            {"role": "system", "content": base_prompt}
         ]
 
         if context:
