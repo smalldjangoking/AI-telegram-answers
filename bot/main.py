@@ -1,32 +1,39 @@
 import asyncio
 from aiogram import Bot, Dispatcher
-from bot.core.config import Settings
+from bot.core.config import settings
 from bot.handlers import routers
 from bot.middleware import (
     CleanTextMiddleware,
     LengthCheckMiddleware,
     ThrottlingMiddleware,
+    RestrictionMiddleware
 )
+from bot.services.openai_service import OpenAIService
 
 async def main():
-    bot = Bot(token=Settings.BOT_TOKEN)
+    bot = Bot(token=settings.BOT_TOKEN)
     dp = Dispatcher()
+    openai_service = OpenAIService(api_key=settings.OPENAI_API_KEY)
 
-    dp.message.middleware(
-        ThrottlingMiddleware(slow_mode_delay=Settings.SLOW_MODE_DELAY),
-    )
-    dp.message.middleware(
-        CleanTextMiddleware(bot_username=Settings.BOT_USERNAME),
-    )
-    dp.message.middleware(
-        LengthCheckMiddleware(max_length=Settings.MAX_MESSAGE_LENGTH),
-    )
+    middlewares = [
+        RestrictionMiddleware(allowed_chat_id=settings.ALLOWED_CHAT_ID),
+        #ThrottlingMiddleware(slow_mode_delay=settings.SLOW_MODE_DELAY),
+        CleanTextMiddleware(bot_username=settings.BOT_USERNAME),
+        LengthCheckMiddleware(max_length=settings.MAX_MESSAGE_LENGTH),
+    ]
+
+    print("=================================")
+    print("🤖 Bot started!")
+    print("=================================")
+
+    for middleware in middlewares:
+        dp.message.middleware(middleware)
 
     dp.include_routers(*routers)
 
     await bot.delete_webhook(drop_pending_updates=True)
     await asyncio.gather(
-        dp.start_polling(bot),
+        dp.start_polling(bot, openai_service=openai_service),
     )
 
 if __name__ == "__main__":
