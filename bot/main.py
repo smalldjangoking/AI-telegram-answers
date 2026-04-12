@@ -17,7 +17,7 @@ async def main():
 
     middlewares = [
         RestrictionMiddleware(allowed_chat_id=settings.ALLOWED_CHAT_ID),
-        #ThrottlingMiddleware(slow_mode_delay=settings.SLOW_MODE_DELAY),
+        ThrottlingMiddleware(slow_mode_delay=settings.SLOW_MODE_DELAY),
         CleanTextMiddleware(bot_username=settings.BOT_USERNAME),
         LengthCheckMiddleware(max_length=settings.MAX_MESSAGE_LENGTH),
     ]
