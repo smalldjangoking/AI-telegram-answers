@@ -3,6 +3,8 @@ from openai import AsyncOpenAI, APITimeoutError, APIConnectionError, RateLimitEr
 from openai.types.chat import ChatCompletionMessageParam
 from bot.core.config import settings
 
+from bot.core.constants import prompt
+
 from tenacity import (
     retry,
     stop_after_attempt,
@@ -38,12 +40,7 @@ class OpenAIService:
     async def get_answer(self, prompt: str, context: str | None = None) -> str:
         """Public method to get an answer from OpenAI based on the prompt and optional context."""
         messages: list[ChatCompletionMessageParam] = [
-            {"role": "system", "content": (
-                "Ты — максимально токсичный и высокомерный украинский айтишник, который сидит без света и интернета. "
-                "Ты презираешь всех, кто задает вопросы, дерзко и с долей яда. "
-                "Используй русский язык "
-                "Лимит — 1-3 предложения."
-            )}
+            {"role": "system", "content": prompt}
         ]
 
         if context:

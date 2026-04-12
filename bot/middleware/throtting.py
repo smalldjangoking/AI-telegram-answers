@@ -2,8 +2,9 @@ import time
 from aiogram import BaseMiddleware
 from aiogram.types import Message, TelegramObject
 from typing import Callable, Dict, Any, Awaitable
+from bot.helpers.messages import MiddlewareAssistant
 
-class ThrottlingMiddleware(BaseMiddleware):
+class ThrottlingMiddleware(BaseMiddleware, MiddlewareAssistant):
     def __init__(self, slow_mode_delay: int = 1200):
         self.users: Dict[int, float] = {}
         self.delay = slow_mode_delay
@@ -21,14 +22,11 @@ class ThrottlingMiddleware(BaseMiddleware):
             last_time = self.users.get(user_id, 0.0)
 
             if current_time - last_time < self.delay:
-                # Рассчитаем сколько осталось ждать (для уведомления юзеру)
                 time_left = int(self.delay - (current_time - last_time))
                 minutes_left = time_left // 60
                 
-                await event.reply(
-                    f"⏳ Подожди немного, прежде чем отправлять новый запрос.\n"
-                    f"Осталось: {minutes_left} мин."
-                )
+                await self._reject(event,
+                    f"⏳ Подожди {minutes_left} мин. перед следующим сообщением.")
                 return
             
             self.users[user_id] = current_time
