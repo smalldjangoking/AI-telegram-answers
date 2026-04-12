@@ -27,3 +27,21 @@ async def ai_reply_handler(message: Message, cleaned_text: str, openai_service: 
     )
 
     await wait_msg.edit_text(answer)
+
+
+@router.message(
+    F.reply_to_message,
+    F.reply_to_message.from_user.id == F.bot.id
+)
+async def ai_reply_to_bot_handler(message: Message, cleaned_text: str, openai_service: OpenAIService):
+    """Handler for messages that are replies to the bot."""
+
+    bot_old_message = None
+    if message.reply_to_message:
+        bot_old_message = message.reply_to_message.text or message.reply_to_message.caption
+
+    answer = await openai_service.get_answer(
+        prompt=cleaned_text,
+        context=f"Твой предыдущий ответ: {bot_old_message}"
+    )
+

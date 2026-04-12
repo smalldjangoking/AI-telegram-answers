@@ -32,10 +32,10 @@ class LengthCheckMiddleware(BaseMiddleware, MiddlewareAssistant):
                 f"❌ Текст слишком короткий.\n"
                 f"Получено: {len(user_message)} симв. (Минимум: 5)")
 
-            if user_message_reply and len(user_message_reply) <= 15:
+            if user_message_reply and len(user_message_reply) <= 5:
                 return await self._reject(event,
                     f"❌ Текст в реплае слишком короткий ({len(user_message_reply)} симв.).\n"
-                    f"Нужно минимум 25 симв. для внятного анализа.")
+                    f"Нужно минимум 5 симв. для внятного анализа.")
             
             if user_message_reply and len(user_message_reply) > self.max_length:
                 return await self._reject(event, 
