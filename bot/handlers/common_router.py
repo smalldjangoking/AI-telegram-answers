@@ -40,8 +40,12 @@ async def ai_reply_to_bot_handler(message: Message, cleaned_text: str, openai_se
     if message.reply_to_message:
         bot_old_message = message.reply_to_message.text or message.reply_to_message.caption
 
+    wait_msg = await message.reply("⏳ ну сукаааааа...")
+
     answer = await openai_service.get_answer(
         prompt=cleaned_text,
         context=f"Твой предыдущий ответ: {bot_old_message}"
     )
+
+    await wait_msg.edit_text(answer)
 
