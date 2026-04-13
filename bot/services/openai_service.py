@@ -3,7 +3,7 @@ from openai import AsyncOpenAI, APITimeoutError, APIConnectionError, RateLimitEr
 from openai.types.chat import ChatCompletionMessageParam
 from bot.core.config import settings
 
-from bot.core.constants import prompt as base_prompt
+from bot.services.base_prompt_service import UkrainianRealityBasePrompt
 
 from tenacity import (
     retry,
@@ -11,6 +11,8 @@ from tenacity import (
     wait_random_exponential,
     retry_if_exception_type
 )
+
+system_instruction = UkrainianRealityBasePrompt()
 
 class OpenAIService:
     def __init__(self, api_key: str):
@@ -37,20 +39,41 @@ class OpenAIService:
         content = response.choices[0].message.content
         return content if content is not None else ""
 
-    async def get_answer(self, prompt: str, context: str | None = None) -> str:
+    async def get_answer(
+        self, 
+        prompt: str, 
+        context: str | None = None,
+        user_history: list[dict[str, str]] | None = None
+        ) -> str:
         """Public method to get an answer from OpenAI based on the prompt and optional context."""
+
+        #system base prompt
         messages: list[ChatCompletionMessageParam] = [
-            {"role": "system", "content": base_prompt}
+            {"role": "system", "content": system_instruction.generate_system_prompt()}
         ]
 
         if context:
             messages.append(
-                {"role": "user", "content": f"Вот контекст для обсуждения:\n{context}"}
+                {
+                    "role": "user", 
+                    "content": f"Контекст на который ссылается пользователь "
+                    f"(Сообщение пользователя или новость.):\n{context}"}
             )
 
+        #New User message
         messages.append(
-            {"role": "user", "content": prompt}
+            {
+                "role": "user", 
+                "content": f"Новое сообщение от пользователя:\n{prompt}"}
         )
+
+        if user_history:
+            for message in user_history:
+                messages.append(
+                    {
+                        "role": "user", 
+                        "content": f"Предыдущее сообщение от пользователя:\n{message['text']}"}
+                )
 
         try:
             content = await self._make_openai_request(messages)

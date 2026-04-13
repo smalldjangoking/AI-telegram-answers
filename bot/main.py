@@ -6,7 +6,8 @@ from bot.middleware import (
     CleanTextMiddleware,
     LengthCheckMiddleware,
     ThrottlingMiddleware,
-    RestrictionMiddleware
+    RestrictionMiddleware,
+    UserLastMessagesMiddleware
 )
 from bot.services.openai_service import OpenAIService
 
@@ -20,6 +21,7 @@ async def main():
         ThrottlingMiddleware(slow_mode_delay=settings.SLOW_MODE_DELAY),
         CleanTextMiddleware(bot_username=settings.BOT_USERNAME),
         LengthCheckMiddleware(max_length=settings.MAX_MESSAGE_LENGTH),
+        UserLastMessagesMiddleware(),
     ]
 
     print("=================================")
