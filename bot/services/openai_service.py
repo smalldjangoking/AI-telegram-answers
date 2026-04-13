@@ -37,7 +37,6 @@ class OpenAIService:
             top_p=0.85,
             presence_penalty=1.2,
             frequency_penalty=0.5,
-            top_p=0.9,
             max_tokens=100,
         )
         content = response.choices[0].message.content
