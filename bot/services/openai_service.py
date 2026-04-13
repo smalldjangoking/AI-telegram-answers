@@ -59,8 +59,7 @@ class OpenAIService:
             messages.append(
                 {
                     "role": "user", 
-                    "content": f"Контекст на который ссылается пользователь "
-                    f"(Сообщение пользователя или новость.):\n{context}"}
+                    "content": f"Контекст для анализа:\n{context}"}
             )
 
         #New User message
