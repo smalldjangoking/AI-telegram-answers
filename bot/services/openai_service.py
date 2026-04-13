@@ -33,8 +33,11 @@ class OpenAIService:
         response = await self.client.chat.completions.create(
             model=self.model,
             messages=messages,
-            temperature=0.7,
-            max_tokens=100
+            temperature=0.9,
+            top_p=0.9,
+            presence_penalty=0.8,
+            frequency_penalty=0.5,
+            max_tokens=200,
         )
         content = response.choices[0].message.content
         return content if content is not None else ""

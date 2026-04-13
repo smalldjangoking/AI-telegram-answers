@@ -17,7 +17,7 @@ class MiddlewareAssistant:
             await message.delete()
         except Exception as e:
             # Silent fail if message is already deleted
-            logging.debug(f"Temporary message deletion failed: {e}")
+            logging.info(f"Temporary message deletion failed: {e}")
 
     async def _reject(self, event: Message, text: str, delay: int = 60) -> None:
         """
