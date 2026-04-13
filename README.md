@@ -106,12 +106,8 @@ bot/
 
 ---
 
-## License
-
-Add a `LICENSE` file to the repo if you want to specify terms.
-
----
-
 <div align="center">
+
+Built for chats that want a **snarky AI commentator**, not a corporate assistant.
 
 </div>
