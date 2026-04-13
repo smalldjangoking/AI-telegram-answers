@@ -11,6 +11,13 @@ from bot.middleware import (
 )
 from bot.services.openai_service import OpenAIService
 
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+
 async def main():
     bot = Bot(token=settings.BOT_TOKEN)
     dp = Dispatcher()
@@ -18,7 +25,7 @@ async def main():
 
     middlewares = [
         RestrictionMiddleware(allowed_chat_id=settings.ALLOWED_CHAT_ID),
-        ThrottlingMiddleware(slow_mode_delay=settings.SLOW_MODE_DELAY),
+        #ThrottlingMiddleware(slow_mode_delay=settings.SLOW_MODE_DELAY),
         CleanTextMiddleware(bot_username=settings.BOT_USERNAME),
         LengthCheckMiddleware(max_length=settings.MAX_MESSAGE_LENGTH),
         UserLastMessagesMiddleware(),
