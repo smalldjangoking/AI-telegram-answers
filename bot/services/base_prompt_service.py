@@ -4,7 +4,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class UkrainianRealityPromptPro:
+class UkrainianRealityBasePrompt:
     def __init__(self):
         self.base_rules = """
             ### ГЛОБАЛЬНЫЕ ДИРЕКТИВЫ (НЕУКОСНИТЕЛЬНО):
