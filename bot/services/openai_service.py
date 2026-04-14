@@ -37,7 +37,7 @@ class OpenAIService:
             top_p=0.85,
             presence_penalty=1.2,
             frequency_penalty=0.5,
-            max_tokens=100,
+            max_tokens=300,
         )
         content = response.choices[0].message.content
         return content if content is not None else ""
@@ -62,13 +62,7 @@ class OpenAIService:
                     "content": f"Контекст для анализа:\n{context}"}
             )
 
-        #New User message
-        messages.append(
-            {
-                "role": "user", 
-                "content": f"Новое сообщение от пользователя:\n{prompt}"}
-        )
-
+        # История хронологически, затем актуальное сообщение последним — иначе модель «отвечает» на предыдущий репликой
         if user_history:
             for message in user_history:
                 messages.append(
@@ -76,6 +70,12 @@ class OpenAIService:
                         "role": "user", 
                         "content": f"Предыдущее сообщение от пользователя:\n{message['text']}"}
                 )
+
+        messages.append(
+            {
+                "role": "user", 
+                "content": f"Новое сообщение от пользователя:\n{prompt}"}
+        )
 
         try:
             content = await self._make_openai_request(messages)
